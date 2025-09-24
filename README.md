@@ -1,4 +1,4 @@
-# SnipLink - A Simple & Modern URL Shortener
+# SnipLink - A  Modern URL Shortener
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)
@@ -43,5 +43,5 @@ Follow these steps to get the project running on your local machine.
 #### **2. Clone the Repository**
 
 ```bash
-git clone [https://github.com/your-username/your-repository-name.git](https://github.com/your-username/your-repository-name.git)
+git clone " https://github.com/coderkeshav-yt/url-shortener.git " 
 cd your-repository-name
