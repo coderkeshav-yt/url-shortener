@@ -6,8 +6,7 @@ from flask import Flask, render_template, request, redirect
 # --- Database Setup ---
 def init_db():
     """Initializes the database and creates the 'urls' table if it doesn't exist."""
-    # Use a local file path for development
-    conn = sqlite3.connect('shortener.db') 
+    conn = sqlite3.connect('/data/shortener.db') # Production path for Render's persistent disk
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS urls (
@@ -22,10 +21,13 @@ def init_db():
 # --- Flask Application ---
 app = Flask(__name__)
 
+# --- Initialize Database on Startup ---
+# This ensures the database and table exist before the first request.
+init_db() # <-- THIS IS THE FIX
+
 def get_db_connection():
     """Establishes a connection to the database."""
-    # Use a local file path for development
-    conn = sqlite3.connect('shortener.db') 
+    conn = sqlite3.connect('/data/shortener.db') # Production path
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -81,9 +83,3 @@ def redirect_to_url(short_code):
         return redirect(url_data['long_url'])
     else:
         return "<h1>URL not found</h1>", 404
-
-# --- Block for running the app locally ---
-# This block is executed only when you run `python app.py` directly.
-if __name__ == '__main__':
-    init_db()  # Create the database and table first
-    app.run(debug=True) # Start the local development server
