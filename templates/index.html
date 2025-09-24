@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnipLink | Fast & Free URL Shortener</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --text-color: #333;
+            --light-text-color: #f8f8f8;
+            --background-gradient: linear-gradient(to right, var(--primary-color) 0%, var(--secondary-color) 100%);
+            --button-hover-gradient: linear-gradient(to right, #5e0fad 0%, #1e60d8 100%);
+            --box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background-gradient);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative; /* Needed for absolute positioning of notification */
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 45px 35px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 550px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            letter-spacing: -0.5px;
+            background: -webkit-linear-gradient(right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h1 span {
+            display: block;
+            font-size: 0.5em;
+            font-weight: 500;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 17px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.2);
+        }
+
+        .submit-btn {
+            background: var(--background-gradient);
+            color: var(--light-text-color);
+            padding: 16px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            background: var(--button-hover-gradient);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        #result {
+            margin-top: 35px;
+            background-color: #f8faff;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid #e0e7ff;
+            word-wrap: break-word;
+            text-align: left;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #result p {
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        .short-url-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #eef2ff;
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px dashed var(--secondary-color);
+        }
+
+        .short-url-display a {
+            flex-grow: 1;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1.1em;
+            margin-right: 10px;
+        }
+        
+        .short-url-display a:hover {
+            text-decoration: underline;
+        }
+
+        .copy-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        .copy-btn:hover {
+            background-color: #5e0fad;
+            transform: translateY(-1px);
+        }
+        
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .error {
+            color: #e74c3c;
+            margin-top: 15px;
+            font-weight: 500;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        /* Custom Notification Styles */
+        #customNotification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to right, #28a745, #218838); /* Green gradient for success */
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease, transform 0.5s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        #customNotification.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        #customNotification .icon {
+            font-size: 1.2em; /* For a checkmark or similar icon */
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .input-field, .submit-btn {
+                font-size: 16px;
+                padding: 14px;
+            }
+            .short-url-display {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            .short-url-display a {
+                margin-right: 0;
+            }
+            .copy-btn {
+                width: 100%;
+            }
+            #customNotification {
+                width: calc(100% - 40px); /* Adjust width for mobile padding */
+                left: 20px;
+                transform: translateX(0);
+            }
+            #customNotification.show {
+                transform: translateX(0) translateY(0);
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="customNotification">
+        <span class="icon">✔️</span> Copied to clipboard!
+    </div>
+
+    <div class="container">
+        <h1>SnipLink <span>Your Ultimate URL Shortener</span></h1>
+        <form method="post">
+            <input type="url" name="long_url" class="input-field" placeholder="Paste your long URL here..." required>
+            <button type="submit" class="submit-btn">Get Your Short Link</button>
+        </form>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if short_url %}
+            <div id="result">
+                <p>Your SnipLink is ready:</p>
+                <div class="short-url-display">
+                    <a id="shortenedLink" href="{{ short_url }}" target="_blank" rel="noopener noreferrer">{{ short_url }}</a>
+                    <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function copyToClipboard() {
+            const shortenedLink = document.getElementById('shortenedLink');
+            const range = document.createRange();
+            range.selectNode(shortenedLink);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            
+            try {
+                document.execCommand('copy');
+                showNotification('Copied to clipboard!', 'success');
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+                showNotification('Failed to copy the link.', 'error');
+            }
+            
+            window.getSelection().removeAllRanges();
+        }
+
+        // New function to show custom notification
+        function showNotification(message, type) {
+            const notification = document.getElementById('customNotification');
+            notification.textContent = ''; // Clear previous message
+            
+            const iconSpan = document.createElement('span');
+            iconSpan.classList.add('icon');
+            iconSpan.textContent = type === 'success' ? '✔️' : '❌'; // Dynamic icon
+            
+            notification.appendChild(iconSpan);
+            notification.appendChild(document.createTextNode(message)); // Add message text
+            
+            // Apply different background for error if needed (currently only success gradient)
+            if (type === 'error') {
+                notification.style.background = 'linear-gradient(to right, #dc3545, #c82333)';
+            } else {
+                notification.style.background = 'linear-gradient(to right, #28a745, #218838)';
+            }
+
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000); // Notification visible for 3 seconds
+        }
+    </script>
+
+</body>
+</html>

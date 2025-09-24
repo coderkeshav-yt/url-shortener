@@ -1,0 +1,8 @@
+# Database
+shortener.db
+
+# Python
+__pycache__/
+*.pyc
+.env
+venv/
